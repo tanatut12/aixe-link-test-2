@@ -4,6 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vanilla TypeScript App</title>
+    <script type="importmap">
+      {
+        "imports": {
+          "axios": "https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/esm/axios.min.js"
+        }
+      }
+    </script>
     <style>
       * {
         margin: 0;
@@ -37,43 +44,6 @@
         font-size: 2rem;
       }
 
-      .counter {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin: 30px 0;
-      }
-
-      button {
-        background: #667eea;
-        color: white;
-        border: none;
-        padding: 12px 24px;
-        border-radius: 8px;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        font-weight: 600;
-      }
-
-      button:hover {
-        background: #5568d3;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-      }
-
-      button:active {
-        transform: translateY(0);
-      }
-
-      .count {
-        font-size: 2rem;
-        font-weight: bold;
-        color: #667eea;
-        min-width: 60px;
-        text-align: center;
-      }
-
       .info {
         background: #f7f7f7;
         padding: 15px;
@@ -82,20 +52,50 @@
         color: #666;
         font-size: 0.9rem;
       }
+
+      .medical-section {
+        margin-top: 20px;
+      }
+
+      #medicalData {
+        max-height: 500px;
+        overflow-y: auto;
+        background: #1e1e1e;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+      }
+
+      #medicalData pre {
+        margin: 0;
+        color: #d4d4d4;
+        font-family: "Consolas", "Monaco", "Courier New", monospace;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+
+      .loading {
+        text-align: center;
+        color: #667eea;
+        padding: 20px;
+      }
+
+      .error {
+        color: #e74c3c;
+        padding: 15px;
+        background: #fee;
+        border-radius: 5px;
+      }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>Vanilla TypeScript 🚀</h1>
-      <p>A simple counter app built with vanilla JavaScript and TypeScript</p>
+      <h1>Medical Data Viewer 🏥</h1>
+      <p>Patient vital signs monitoring system</p>
 
-      <div class="counter">
-        <button id="decrementBtn">-</button>
-        <div class="count" id="count">0</div>
-        <button id="incrementBtn">+</button>
+      <div class="medical-section">
+        <div id="medicalData"></div>
       </div>
-
-      <button id="resetBtn" style="width: 100%">Reset</button>
 
       <div class="info">
         <strong>How to use:</strong><br />
