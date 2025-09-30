@@ -7,7 +7,8 @@
     <script type="importmap">
       {
         "imports": {
-          "axios": "https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/esm/axios.min.js"
+          "axios": "https://cdn.jsdelivr.net/npm/axios@1.6.0/dist/esm/axios.min.js",
+          "d3": "https://cdn.jsdelivr.net/npm/d3@7/+esm"
         }
       }
     </script>
@@ -34,7 +35,7 @@
         padding: 40px;
         border-radius: 16px;
         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        max-width: 500px;
+        max-width: 1400px;
         width: 100%;
       }
 
@@ -44,34 +45,247 @@
         font-size: 2rem;
       }
 
-      .info {
-        background: #f7f7f7;
-        padding: 15px;
-        border-radius: 8px;
-        margin-top: 20px;
-        color: #666;
-        font-size: 0.9rem;
-      }
-
       .medical-section {
         margin-top: 20px;
       }
 
-      #medicalData {
-        max-height: 500px;
-        overflow-y: auto;
-        background: #1e1e1e;
-        padding: 15px;
-        border-radius: 8px;
-        margin-top: 15px;
+      .controls-bar {
+        margin-bottom: 20px;
       }
 
-      #medicalData pre {
-        margin: 0;
-        color: #d4d4d4;
-        font-family: "Consolas", "Monaco", "Courier New", monospace;
+      .view-toggle {
+        display: flex;
+        gap: 0;
+        margin-bottom: 15px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        overflow: hidden;
+        width: fit-content;
+      }
+
+      .view-btn {
+        padding: 10px 20px;
+        border: none;
+        background: white;
+        color: #6b7280;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .view-btn:hover {
+        background: #f3f4f6;
+      }
+
+      .view-btn.active {
+        background: #667eea;
+        color: white;
+      }
+
+      .filter-controls {
+        display: flex;
+        gap: 20px;
+        padding: 15px;
+        background: #f9fafb;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+      }
+
+      .filter-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .filter-group label {
+        font-weight: 500;
+        font-size: 14px;
+        color: #374151;
+      }
+
+      .filter-group select {
+        padding: 6px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        background: white;
+        font-size: 14px;
+        cursor: pointer;
+        min-width: 150px;
+      }
+
+      .filter-group select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      }
+
+      #medicalData {
+        overflow-x: auto;
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        margin-top: 15px;
+        border: 1px solid #ddd;
+      }
+
+      .grid-container {
+        min-width: 800px;
+      }
+
+      .vital-grid {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
         font-size: 12px;
+      }
+
+      .category-header {
+        font-weight: 600;
+        fill: #333;
+        font-size: 13px;
+      }
+
+      .time-header {
+        font-weight: 500;
+        fill: #555;
+        font-size: 11px;
+      }
+
+      .vital-name {
+        fill: #444;
+        font-weight: 500;
+        font-size: 12px;
+      }
+
+      .grid-cell {
+        stroke: #d1d5db;
+        stroke-width: 1;
+      }
+
+      .grid-cell.empty-cell {
+        fill: #fafafa;
+      }
+
+      .grid-cell.normal {
+        fill: #f0f9ff;
+      }
+
+      .grid-cell.high-limit {
+        fill: #fee2e2;
+      }
+
+      .grid-cell.low-limit {
+        fill: #dbeafe;
+      }
+
+      .grid-cell.has-comment {
+        fill: #fef3c7;
+      }
+
+      .cell-value-large {
+        fill: #111827;
+        font-weight: 700;
+        font-size: 16px;
+        text-anchor: middle;
+      }
+
+      .cell-range {
+        fill: #6b7280;
+        font-weight: 400;
+        font-size: 10px;
+        text-anchor: middle;
+      }
+
+      .cell-alert {
+        font-weight: 600;
+        font-size: 9px;
+        text-anchor: middle;
+      }
+
+      .cell-alert.high {
+        fill: #dc2626;
+      }
+
+      .cell-alert.low {
+        fill: #2563eb;
+      }
+
+      .tooltip {
+        position: absolute;
+        padding: 10px 14px;
+        background: rgba(0, 0, 0, 0.85);
+        color: white;
+        border-radius: 4px;
+        font-size: 12px;
+        pointer-events: none;
+        z-index: 1000;
+        max-width: 280px;
         line-height: 1.5;
+      }
+
+      .tooltip-label {
+        font-weight: 600;
+        margin-bottom: 4px;
+      }
+
+      .tooltip-alert {
+        margin-top: 6px;
+        padding-top: 6px;
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        font-weight: 500;
+      }
+
+      .dashboard-container {
+        padding: 10px;
+      }
+
+      .dashboard-category {
+        margin-bottom: 40px;
+      }
+
+      .dashboard-category-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #667eea;
+        margin-bottom: 20px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #667eea;
+      }
+
+      .chart-container {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+      }
+
+      .chart-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 15px;
+      }
+
+      .chart-svg {
+        overflow: visible;
+      }
+
+      .chart-svg text {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+      }
+
+      .chart-svg .domain {
+        stroke: #d1d5db;
+      }
+
+      .chart-svg .tick line {
+        stroke: #e5e7eb;
+      }
+
+      .chart-svg .tick text {
+        fill: #6b7280;
       }
 
       .loading {
@@ -90,19 +304,35 @@
   </head>
   <body>
     <div class="container">
-      <h1>Medical Data Viewer 🏥</h1>
+      <h1>Medical Data Viewer</h1>
       <p>Patient vital signs monitoring system</p>
 
       <div class="medical-section">
+        <div class="controls-bar">
+          <div class="view-toggle">
+            <button id="gridViewBtn" class="view-btn active">Grid View</button>
+            <button id="dashboardViewBtn" class="view-btn">
+              Dashboard View
+            </button>
+          </div>
+          <div class="filter-controls">
+            <div class="filter-group">
+              <label>Category:</label>
+              <select id="categoryFilter">
+                <option value="all">All Categories</option>
+              </select>
+            </div>
+            <div class="filter-group">
+              <label>Alert Status:</label>
+              <select id="alertFilter">
+                <option value="all">All</option>
+                <option value="alerts">Alerts Only</option>
+                <option value="normal">Normal Only</option>
+              </select>
+            </div>
+          </div>
+        </div>
         <div id="medicalData"></div>
-      </div>
-
-      <div class="info">
-        <strong>How to use:</strong><br />
-        1. Run <code>npm install</code> to install dependencies<br />
-        2. Run <code>npm run build</code> to compile TypeScript<br />
-        3. Run <code>npm run watch</code> for development mode<br />
-        4. Open this HTML file in your browser
       </div>
     </div>
 
