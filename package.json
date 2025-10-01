@@ -7,7 +7,8 @@
     "watch": "tsc --watch",
     "dev": "tsc --watch",
     "serve": "serve .",
-    "start": "npm-run-all --parallel watch serve"
+    "start": "npm-run-all --parallel watch serve",
+    "vercel-build": "tsc"
   },
   "devDependencies": {
     "@types/d3": "^7.4.3",
