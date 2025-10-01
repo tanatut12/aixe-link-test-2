@@ -1,11 +1,15 @@
 import axios from "axios";
 import type { IMedicalReading } from "../interfaces/index.js";
 
-const API_BASE_URL = "http://103.121.12.92:9582";
+// Use proxy in production (Vercel), direct API in development
+const API_URL = 
+  window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+    ? "http://103.121.12.92:9582/test-data"
+    : "/api/proxy";
 
 export async function fetchMedicalData(): Promise<IMedicalReading[]> {
   try {
-    const response = await axios.get(`${API_BASE_URL}/test-data`, {
+    const response = await axios.get(API_URL, {
       responseType: "text",
     });
 
